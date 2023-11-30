@@ -75,12 +75,19 @@ stages {
         }
     }
 
-    stage('Stage5') {
+
+stage('Stage5') {
         when {
-             if (userInput.Release == 'Proceed') {
+            expression {
+                return env.STAGE_NAME == 'Stage5'
+            }
+        }
+        steps {
+            if (userInput.Release == 'Proceed') {
                         echo "Stage5_8668106t : Work Release – Proceeds to Next Phase"
                     } else {
                         echo "Stage5_8668106t : Work Release - Stops"
                     }
+        }
     }
 }
