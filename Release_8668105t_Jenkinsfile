@@ -2,7 +2,10 @@ pipeline {
 
     agent {
         node {
-            label 'master'
+            label 'main'
+        }
+        docker {
+             image 'ubuntu'
         }
     }
 
