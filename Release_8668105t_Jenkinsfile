@@ -1,1 +1,87 @@
+pipeline {
 
+    agent {
+        node {
+            label 'master'
+        }
+    }
+
+    tools { 
+        maven 'maven3' 
+    }
+
+    options {
+        buildDiscarder logRotator( 
+                    daysToKeepStr: '15', 
+                    numToKeepStr: '10'
+            )
+    }
+
+    environment {
+        APP_NAME = "STUDENT_APP"
+        APP_ENV  = "DEV"
+    }
+
+    stages {
+        
+        stage('Stage1') {
+            steps {
+                sh """
+                echo "Stage1_8668106t : Release Environment Preparation Completed"
+                """
+            }
+        }
+
+        stage('Stage2') {
+            steps {
+                sh """
+                docker stop webapp_8668106t || true
+                docker rm webapp_8668106t || true
+                docker run -d --name webapp_8668106t -p 31200:80 wb1_image_8668106t
+                echo "Stage2_8668106t : Release Container webapp_8668106t Created Completed"
+                """
+            }
+        }
+
+        stage('Stage3') {
+            parallel {
+                stage('API Test') {
+                    steps {
+                        sh """
+                        echo "Stage3_8668106t: API Test Completed"
+                        """
+                    }
+                }
+                stage('Scan Test') {
+                    steps {
+                        sh """
+                        echo "Stage3_8668106t: Scan Test Completed"
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Stage4') {
+            steps {
+                script {
+                    def userInput = input(
+                        message: "8668106t, proceed to release the work to next phase?",
+                        parameters: [
+                            [$class: 'ChoiceParameterDefinition', 
+                             choices: ['Proceed', 'Abort'], 
+                             description: 'Select Proceed to release the work to next phase or Abort to stop the release process', 
+                             name: 'Release']
+                        ]
+                    )
+                    if (userInput.Release == 'Proceed') {
+                        echo "Stage5_8668106t : Work Release – Proceeds to Next Phase"
+                    } else {
+                        echo "Stage5_8668106t : Work Release - Stops"
+                    }
+                }
+            }
+        }
+
+    }   
+}
