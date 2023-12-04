@@ -62,32 +62,29 @@ stages {
 
     stage('Stage4') {
         steps {
-            script {
-                def userInput = input(
-                    message: "8668106t, proceed to release the work to next phase?",
-                    ok: "Proceed",
-                    parameters: [
-                        [$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Abort']
-                    ]
-                )
-               
+            def userInput = input(
+                message: "8668106t, proceed to release the work to next phase?",
+                ok: "Proceed",
+                parameters: [
+                    [$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Abort']
+                ]
+            )
+            if (userInput) {
+                echo "Stage5_8668106t : Work Release – Proceeds to Next Phase"
+            } else {
+                echo "Stage5_8668106t : Work Release - Stops"
             }
         }
     }
 
-
-stage('Stage5') {
+    stage('Stage5') {
         when {
             expression {
                 return env.STAGE_NAME == 'Stage5'
             }
         }
         steps {
-            if (userInput.Release == 'Proceed') {
-                        echo "Stage5_8668106t : Work Release – Proceeds to Next Phase"
-                    } else {
-                        echo "Stage5_8668106t : Work Release - Stops"
-                    }
+            echo "Stage5_8668106t : Work Release – Proceeds to Next Phase"
         }
     }
 }
